@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sinais de Traição — Descubra Agora</title>
+<style>
+  :root{
+    --dark:#150f22; --mid:#3a1c30; --amber:#c47a3a; --cream:#f4ece0; --gold:#d6a85c;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Georgia', 'Times New Roman', serif;
+    background:linear-gradient(180deg, var(--dark) 0%, var(--mid) 55%, var(--amber) 100%);
+    min-height:100vh; color:var(--cream); display:flex; justify-content:center;
+    padding:24px 16px;
+  }
+  .card{
+    max-width:460px; width:100%; background:rgba(21,15,34,0.55);
+    border:1px solid rgba(214,168,92,0.35); border-radius:18px;
+    padding:32px 24px; backdrop-filter:blur(6px);
+    box-shadow:0 20px 60px rgba(0,0,0,0.4);
+  }
+  .eyebrow{ text-align:center; letter-spacing:3px; font-size:12px; color:var(--gold); font-family:Arial, sans-serif; font-weight:bold; margin-bottom:10px;}
+  h1{ text-align:center; font-size:28px; margin-bottom:8px; color:var(--cream); line-height:1.25;}
+  .sub{ text-align:center; font-style:italic; color:var(--gold); font-size:15px; margin-bottom:26px;}
+  .progress-wrap{ height:6px; background:rgba(255,255,255,0.12); border-radius:6px; margin-bottom:28px; overflow:hidden;}
+  .progress-bar{ height:100%; width:0%; background:linear-gradient(90deg, var(--gold), var(--amber)); transition:width .35s ease;}
+  .qcount{ text-align:center; font-family:Arial, sans-serif; font-size:12px; color:rgba(244,236,224,0.6); margin-bottom:18px; letter-spacing:1px;}
+  .question{ font-size:20px; line-height:1.4; margin-bottom:22px; text-align:center;}
+  .options{ display:flex; flex-direction:column; gap:12px;}
+  .opt-btn{
+    font-family:Arial, sans-serif; font-size:15px; text-align:left;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(214,168,92,0.4);
+    color:var(--cream); padding:14px 16px; border-radius:10px; cursor:pointer;
+    transition:all .15s ease;
+  }
+  .opt-btn:active, .opt-btn:hover{ background:rgba(214,168,92,0.2); border-color:var(--gold); transform:translateY(-1px);}
+  .screen{ display:none; }
+  .screen.active{ display:block; }
+  .start-btn{
+    display:block; width:100%; font-family:Arial, sans-serif; font-weight:bold; font-size:16px;
+    background:linear-gradient(90deg, var(--gold), var(--amber)); color:#1c1208;
+    border:none; padding:16px; border-radius:10px; cursor:pointer; margin-top:8px;
+    letter-spacing:.5px;
+  }
+  .start-btn:active{ opacity:.85; }
+  .intro-list{ font-family:Arial, sans-serif; font-size:14px; color:rgba(244,236,224,0.85); margin:20px 0; padding-left:18px; line-height:2;}
+  .result-badge{
+    width:88px; height:88px; border-radius:50%; border:2px solid var(--gold); margin:0 auto 18px;
+    display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:bold; color:var(--cream);
+    font-family:Arial, sans-serif;
+  }
+  .result-title{ text-align:center; font-size:24px; margin-bottom:10px;}
+  .result-text{ font-family:Arial, sans-serif; font-size:15px; line-height:1.7; color:rgba(244,236,224,0.9); text-align:center; margin-bottom:22px;}
+  .cta{
+    display:block; text-align:center; text-decoration:none; font-family:Arial, sans-serif;
+    font-weight:bold; font-size:17px; color:#1c1208;
+    background:linear-gradient(90deg, var(--gold), var(--amber));
+    padding:18px; border-radius:12px; box-shadow:0 10px 30px rgba(196,122,58,0.4);
+  }
+  .cta:active{ opacity:.85; }
+  .disclaimer{ font-family:Arial, sans-serif; font-size:11px; color:rgba(244,236,224,0.5); text-align:center; margin-top:16px; line-height:1.6;}
+  .back{ font-family:Arial, sans-serif; font-size:12px; color:rgba(244,236,224,0.5); text-align:center; margin-top:16px; cursor:pointer; text-decoration:underline;}
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- INTRO -->
+  <div id="screen-intro" class="screen active">
+    <div class="eyebrow">GUIA PRÁTICO E COMPLETO</div>
+    <h1>Sinais de Traição</h1>
+    <div class="sub">Responda 10 perguntas rápidas e descubra o que os sinais dizem</div>
+    <ul class="intro-list">
+      <li>Leva menos de 2 minutos</li>
+      <li>100% baseado em padrões de comportamento reais</li>
+      <li>No final, você recebe uma leitura clara da sua situação</li>
+    </ul>
+    <button class="start-btn" onclick="goTo(1)">Começar agora →</button>
+    <div class="disclaimer">Nenhum sinal isolado é prova de traição. Este quiz é uma ferramenta de reflexão, não um diagnóstico.</div>
+  </div>
+
+  <!-- QUESTIONS -->
+  <div id="screen-quiz" class="screen">
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="qcount" id="qcount">PERGUNTA 1 DE 10</div>
+    <div class="question" id="questionText"></div>
+    <div class="options" id="optionsWrap"></div>
+    <div class="back" onclick="goTo(0)">← voltar ao início</div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="screen-result" class="screen">
+    <div class="result-badge" id="resultScore">0/10</div>
+    <div class="result-title" id="resultTitle">Resultado</div>
+    <div class="result-text" id="resultText"></div>
+    <div style="text-align:center; font-family:Arial, sans-serif; margin-bottom:14px;">
+      <span style="font-size:14px; color:rgba(244,236,224,0.6);">Guia completo por apenas</span><br>
+      <span style="font-size:32px; font-weight:bold; color:var(--gold);">R$ 19,99</span>
+    </div>
+    <a class="cta" id="ctaBtn" href="https://checkout.escalepay.com/5893498" target="_blank" rel="noopener">
+      Quero o guia completo →
+    </a>
+    <div class="disclaimer">Guia prático com 9 capítulos, checklist de autoavaliação, roteiro de conversa e perguntas frequentes — sem paranoia e sem invadir a privacidade de ninguém.</div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  { q: "O(a) seu(sua) parceiro(a) anda mais distante emocionalmente, sem uma causa clara?", opts: ["Sim", "Não", "Às vezes"] },
+  { q: "Ele(a) protege a tela do celular ou muda de app quando você se aproxima?", opts: ["Sim, com frequência", "Raramente", "Não"] },
+  { q: "Os horários ou a rotina mudaram sem uma explicação que faça sentido?", opts: ["Sim", "Não", "Um pouco"] },
+  { q: "Você sente que, às vezes, está \u201cconversando com um estranho\u201d?", opts: ["Sim", "Não"] },
+  { q: "Notou um cuidado incomum com a aparência antes de sair sozinho(a)?", opts: ["Sim", "Não", "Não reparei"] },
+  { q: "Ele(a) fica evasivo(a) ou muda de assunto quando você pergunta sobre compromissos?", opts: ["Sim", "Não", "Às vezes"] },
+  { q: "A intimidade física mudou bastante (para mais ou para menos), sem conversa sobre isso?", opts: ["Sim", "Não"] },
+  { q: "Você já percebeu contradições em detalhes que ele(a) contou sobre onde esteve?", opts: ["Sim", "Não"] },
+  { q: "Perguntas simples e calmas geram uma irritação que parece desproporcional?", opts: ["Sim", "Não", "Às vezes"] },
+  { q: "Você já tentou conversar sobre isso e sentiu que não chegou a lugar nenhum?", opts: ["Sim", "Ainda não conversei", "Não"] },
+];
+
+let current = 0;
+let positiveSignals = 0;
+
+function goTo(screen){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  if(screen === 0){
+    document.getElementById('screen-intro').classList.add('active');
+    current = 0; positiveSignals = 0;
+  } else if(screen === 1){
+    document.getElementById('screen-quiz').classList.add('active');
+    current = 0;
+    renderQuestion();
+  }
+}
+
+function renderQuestion(){
+  const item = questions[current];
+  document.getElementById('qcount').textContent = `PERGUNTA ${current+1} DE ${questions.length}`;
+  document.getElementById('progressBar').style.width = `${(current/questions.length)*100}%`;
+  document.getElementById('questionText').textContent = item.q;
+  const wrap = document.getElementById('optionsWrap');
+  wrap.innerHTML = '';
+  item.opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    btn.onclick = () => answer(opt);
+    wrap.appendChild(btn);
+  });
+}
+
+function answer(opt){
+  if(opt.toLowerCase().startsWith('sim') || opt === 'Às vezes' || opt === 'Um pouco'){
+    positiveSignals += (opt.toLowerCase().startsWith('sim')) ? 1 : 0.5;
+  }
+  current++;
+  if(current < questions.length){
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult(){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-result').classList.add('active');
+  const score = Math.round(positiveSignals);
+  document.getElementById('resultScore').textContent = `${score}/10`;
+
+  let title, text;
+  if(score <= 2){
+    title = "Poucos sinais no momento";
+    text = "Seus sinais atuais são baixos — mas se algo ainda incomoda você, vale entender a raiz do desconforto antes que ele cresça. O guia ensina a diferenciar uma fase difícil de um padrão real.";
+  } else if(score <= 5){
+    title = "Alguns sinais merecem atenção";
+    text = "Você já notou um número relevante de sinais. Antes de tirar conclusões, é importante organizar o que observou e entender o que pode (ou não) significar traição. O guia completo te ajuda a fazer exatamente isso, passo a passo.";
+  } else {
+    title = "Vários sinais consistentes";
+    text = "O número de sinais que você marcou forma um padrão que não deveria ser ignorado. Isso não é uma prova — mas é motivo mais do que suficiente para buscar clareza real. O guia completo tem o checklist e o roteiro de conversa que você precisa agora.";
+  }
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultText').textContent = text;
+}
+</script>
+</body>
+</html>
